@@ -11,6 +11,19 @@
             ],
             "isBuildCommand": true,
             "problemMatcher": "$msCompile"
+        },
+        {
+          "taskName": "test",
+          "command": "dotnet",
+          "options": {
+              "cwd": "${workspaceRoot}/Oxagile.Internal.Api.Test"
+          },
+          "args": [
+            "test"
+          ],
+          "isTestCommand": true,
+          "showOutput": "always",
+          "problemMatcher": "$msCompile"
         }
     ]
 }
