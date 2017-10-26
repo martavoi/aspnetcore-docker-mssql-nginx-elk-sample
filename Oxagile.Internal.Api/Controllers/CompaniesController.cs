@@ -18,7 +18,7 @@ namespace Oxagile.Internal.Api.Controllers
             ICompanyRepository companyRepository,
             IMapper mapper)
         {
-            this.companyRepository = companyRepository;;
+            this.companyRepository = companyRepository;
             this.mapper = mapper;
         }
 
@@ -38,7 +38,7 @@ namespace Oxagile.Internal.Api.Controllers
                 return CreatedAtAction("Get", "Company", new { id = @new.Id }, mapper.Map<GetCompanyDto>(@new));
             }
 
-            return new StatusCodeResult(422);
+            return BadRequest(ModelState);
         }
     }
 }

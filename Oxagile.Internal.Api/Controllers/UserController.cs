@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Oxagile.Internal.Api.Dtos;
+using Oxagile.Internal.Api.Dtos.Validation;
 using Oxagile.Internal.Api.Entities;
 using Oxagile.Internal.Api.Repositories;
 
@@ -41,7 +43,7 @@ namespace Oxagile.Internal.Api.Controllers
                 return Ok(mapper.Map<GetUserDto>(user));
             }
 
-            return new StatusCodeResult(422);
+            return BadRequest(ModelState);
         }
 
         [HttpPut("{id:int}")]
@@ -55,15 +57,6 @@ namespace Oxagile.Internal.Api.Controllers
                     return NotFound();
                 }
 
-                if (existing.CompanyId != user.CompanyId)
-                {
-                    var company = await companyRepository.Get(user.CompanyId);
-                    if (company == null)
-                    {
-                        return BadRequest();
-                    }
-                }
-
                 existing.Name = user.Name;
                 existing.Surname = user.Surname;
                 existing.BirthDate = user.BirthDate;
@@ -74,7 +67,7 @@ namespace Oxagile.Internal.Api.Controllers
                 return Ok(mapper.Map<GetUserDto>(updated));
             }
             
-            return new StatusCodeResult(422);
+            return BadRequest(ModelState);
         }
 
         [HttpPost]
@@ -94,7 +87,7 @@ namespace Oxagile.Internal.Api.Controllers
                 return CreatedAtAction("Get", new { id = @new.Id }, mapper.Map<GetUserDto>(@new));
             }
 
-            return new StatusCodeResult(422);
+            return BadRequest(ModelState);
         }
 
         [HttpDelete("{id:int}")]
@@ -112,7 +105,7 @@ namespace Oxagile.Internal.Api.Controllers
                 return Ok();
             }
 
-            return new StatusCodeResult(422);
+            return BadRequest(ModelState);
         }
     }
 }

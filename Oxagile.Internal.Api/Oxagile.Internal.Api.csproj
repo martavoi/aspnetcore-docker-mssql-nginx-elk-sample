@@ -7,6 +7,7 @@
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />
     <PackageReference Include="automapper" Version="6.1.1" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="7.2.1" />
     <PackageReference Include="structuremap" Version="4.5.2" />
     <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="1.4.0" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta004" PrivateAssets="All" />

@@ -31,7 +31,7 @@ namespace Oxagile.Internal.Api.Controllers
                 return Ok(mapper.Map<GetCompanyDto>(company));    
             }
 
-            return new StatusCodeResult(422);
+            return BadRequest(ModelState);
         }
 
         [HttpGet("users")]
@@ -43,7 +43,7 @@ namespace Oxagile.Internal.Api.Controllers
                 return Ok(mapper.Map<IEnumerable<GetCompanyUserDto>>(company.Users));    
             }
 
-            return new StatusCodeResult(422);
+            return BadRequest(ModelState);
         }
 
         [HttpPut]
@@ -63,7 +63,7 @@ namespace Oxagile.Internal.Api.Controllers
                 return Ok(mapper.Map<GetCompanyDto>(updated));
             }
             
-            return new StatusCodeResult(422);
+            return BadRequest(ModelState);
         }
 
         [HttpDelete]
@@ -81,7 +81,7 @@ namespace Oxagile.Internal.Api.Controllers
                 return Ok();
             }
 
-            return new StatusCodeResult(422);
+            return BadRequest(ModelState);
         }
     }
 }

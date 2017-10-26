@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +34,7 @@ namespace Oxagile.Internal.Api
         {
             services
                 .AddMvcCore()
+                .AddFluentValidation()
                 .AddJsonFormatters()
                 .AddXmlSerializerFormatters()
                 .AddApiExplorer();
@@ -40,6 +42,9 @@ namespace Oxagile.Internal.Api
             services
                 .AddDbContext<UserCompanyContext>(
                     _ => _.UseSqlServer(Configuration.GetConnectionString("Database")));
+
+            services.AddOptions();
+            services.Configure<Settings>(Configuration.GetSection("Settings"));
 
             services.AddSwaggerGen(_ =>
             {
