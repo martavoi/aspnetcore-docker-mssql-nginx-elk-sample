@@ -26,7 +26,7 @@ namespace Oxagile.Internal.Api.Repositories
         {
             return await context
                 .Users
-                .AsNoTracking()
+                .Include(u => u.Company)
                 .ToArrayAsync();   
         }
 
@@ -35,13 +35,7 @@ namespace Oxagile.Internal.Api.Repositories
             var user = await context
                 .Users
                 .Include(c => c.Company)
-                .AsNoTracking()
                 .SingleOrDefaultAsync(c => c.Id == id);
-
-            if (user == null)
-            {
-                throw new ArgumentException($"User with id = {id} doesn't exist");
-            }
 
             return user;
         }

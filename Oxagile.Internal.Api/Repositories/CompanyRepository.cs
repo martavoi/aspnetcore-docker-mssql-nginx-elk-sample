@@ -26,7 +26,7 @@ namespace Oxagile.Internal.Api.Repositories
         {
             return await context
                 .Companies
-                .AsNoTracking()
+                .Include(c => c.Users)
                 .ToArrayAsync();   
         }
 
@@ -35,7 +35,6 @@ namespace Oxagile.Internal.Api.Repositories
             var company = await context
                 .Companies
                 .Include(c => c.Users)
-                .AsNoTracking()
                 .SingleOrDefaultAsync(c => c.Id == id);
 
             return company;

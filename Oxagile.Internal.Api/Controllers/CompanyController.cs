@@ -8,31 +8,21 @@ using Oxagile.Internal.Api.Repositories;
 
 namespace Oxagile.Internal.Api.Controllers
 {
-    [Route("api/companies")]
+    [Route("api/companies/{id:int}")]
     public class CompanyController : ControllerBase
     {
         private readonly ICompanyRepository companyRepository;
-        private readonly IUserRepository userRepository;
         private readonly IMapper mapper;
 
         public CompanyController(
             ICompanyRepository companyRepository,
-            IUserRepository userRepository,
             IMapper mapper)
         {
             this.companyRepository = companyRepository;
-            this.userRepository = userRepository;
             this.mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
-        {
-            var companies = await companyRepository.Get();
-            return Ok(mapper.Map<IEnumerable<GetCompanyDto>>(companies));
-        }
-
-        [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
             if (ModelState.IsValid)
@@ -44,7 +34,19 @@ namespace Oxagile.Internal.Api.Controllers
             return new StatusCodeResult(422);
         }
 
-        [HttpPut("{id:int}")]
+        [HttpGet("users")]
+        public async Task<IActionResult> GetUsers(int id)
+        {
+            if (ModelState.IsValid)
+            {
+                var company = await companyRepository.Get(id);
+                return Ok(mapper.Map<IEnumerable<GetCompanyUserDto>>(company.Users));    
+            }
+
+            return new StatusCodeResult(422);
+        }
+
+        [HttpPut]
         public async Task<IActionResult> Edit(int id, [FromBody]EditCompanyDto company)
         {
             if (ModelState.IsValid)
@@ -55,8 +57,7 @@ namespace Oxagile.Internal.Api.Controllers
                     return NotFound();
                 }
 
-                existing = mapper.Map<Company>(company);
-                existing.Id = id;
+                existing.Name = company.Name;
 
                 var updated = await companyRepository.Update(existing);
                 return Ok(mapper.Map<GetCompanyDto>(updated));
@@ -65,19 +66,7 @@ namespace Oxagile.Internal.Api.Controllers
             return new StatusCodeResult(422);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody]CreateCompanyDto company)
-        {
-            if (ModelState.IsValid)
-            {
-                var @new = await companyRepository.Create(mapper.Map<Company>(company));
-                return CreatedAtAction("Get", new { id = @new.Id }, mapper.Map<GetCompanyDto>(@new));
-            }
-
-            return new StatusCodeResult(422);
-        }
-
-        [HttpDelete("{id:int}")]
+        [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
             if (ModelState.IsValid)

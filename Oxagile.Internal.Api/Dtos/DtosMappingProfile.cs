@@ -10,10 +10,13 @@ namespace Oxagile.Internal.Api.Dtos
             CreateMap<Company, GetCompanyDto>();
             CreateMap<CreateCompanyDto, Company>();
             CreateMap<Company, EditCompanyDto>().ReverseMap();
+            CreateMap<Company, GetUserCompanyDto>();
+
             CreateMap<User, GetUserDto>();
-            CreateMap<User, CreateCompanyDto>();
-            CreateMap<User, EditUserDto>();
+            CreateMap<EditUserDto, User>();
+            CreateMap<CreateUserDto, User>();
             CreateMap<User, EditCompanyUserDto>().ReverseMap();
+            CreateMap<User, GetCompanyUserDto>();
         }
     }
 }

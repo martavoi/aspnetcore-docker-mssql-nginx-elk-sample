@@ -11,7 +11,7 @@ using System;
 namespace Oxagile.Internal.Api.Migrations
 {
     [DbContext(typeof(UserCompanyContext))]
-    [Migration("20171025203319_Init")]
+    [Migration("20171026122229_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

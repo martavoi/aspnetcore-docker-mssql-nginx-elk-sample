@@ -9,6 +9,6 @@ namespace Oxagile.Internal.Api.Dtos
         public string Surname { get; set; }
         public DateTime BirthDate { get; set; }
         public string Email { get; set; }
-        public GetCompanyDto Company { get; set; }
+        public GetUserCompanyDto Company { get; set; }
     }
 }

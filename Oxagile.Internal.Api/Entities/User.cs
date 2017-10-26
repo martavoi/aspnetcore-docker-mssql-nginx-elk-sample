@@ -9,9 +9,10 @@ namespace Oxagile.Internal.Api.Entities
         public string Surname { get; set; }
         public DateTime BirthDate { get; set; }
         public string Email { get; set; }
-
-        [ForeignKey("Company")]
+        
         public int CompanyId { get; set; }
+
+        [ForeignKey("CompanyId")]
         public Company Company { get; set; }
     }
 }
