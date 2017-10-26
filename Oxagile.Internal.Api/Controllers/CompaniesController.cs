@@ -34,9 +34,6 @@ namespace Oxagile.Internal.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody]CreateCompanyDto company)
         {
-            var i = 0;
-            var b = 1 / i;
-
             if (ModelState.IsValid)
             {
                 var @new = await companyRepository.Create(mapper.Map<Company>(company));

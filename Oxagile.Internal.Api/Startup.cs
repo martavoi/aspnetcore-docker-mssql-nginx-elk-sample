@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 using Oxagile.Internal.Api.Entities;
 using Oxagile.Internal.Api.Filters.Exception;
-using Serilog.Context;
+using Oxagile.Internal.Api.Formatters;
 using StructureMap;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -38,10 +35,14 @@ namespace Oxagile.Internal.Api
                 .AddMvcCore(_ => 
                 {
                     _.Filters.Add(typeof(ExceptionFilter));
+
+                    _.OutputFormatters.RemoveType<TextOutputFormatter>();
+                    _.OutputFormatters.RemoveType<HttpNoContentOutputFormatter>();
                 })
                 .AddFluentValidation()
                 .AddJsonFormatters()
                 .AddXmlSerializerFormatters()
+                .AddCsvSerializerFormatters()
                 .AddApiExplorer();
 
             services
@@ -73,9 +74,9 @@ namespace Oxagile.Internal.Api
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
+            app.UseSwaggerUI(_ =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Oxagile.Internal.Api v1");
+                _.SwaggerEndpoint("/swagger/v1/swagger.json", "Oxagile.Internal.Api v1");
             });
             
             app.UseMvc();
