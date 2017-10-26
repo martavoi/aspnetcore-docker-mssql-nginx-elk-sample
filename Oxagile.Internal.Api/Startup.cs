@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Oxagile.Internal.Api.Entities;
+using Oxagile.Internal.Api.Filters.Exception;
+using Serilog.Context;
 using StructureMap;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -33,7 +35,10 @@ namespace Oxagile.Internal.Api
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services
-                .AddMvcCore()
+                .AddMvcCore(_ => 
+                {
+                    _.Filters.Add(typeof(ExceptionFilter));
+                })
                 .AddFluentValidation()
                 .AddJsonFormatters()
                 .AddXmlSerializerFormatters()
@@ -67,17 +72,13 @@ namespace Oxagile.Internal.Api
         
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Oxagile.Internal.Api v1");
             });
+            
+            app.UseMvc();
         }
     }
 }

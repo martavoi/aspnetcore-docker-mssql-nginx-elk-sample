@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -5,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Oxagile.Internal.Api.Dtos;
 using Oxagile.Internal.Api.Entities;
 using Oxagile.Internal.Api.Repositories;
+using Serilog.Context;
 
 namespace Oxagile.Internal.Api.Controllers
 {
@@ -32,6 +34,9 @@ namespace Oxagile.Internal.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody]CreateCompanyDto company)
         {
+            var i = 0;
+            var b = 1 / i;
+
             if (ModelState.IsValid)
             {
                 var @new = await companyRepository.Create(mapper.Map<Company>(company));
