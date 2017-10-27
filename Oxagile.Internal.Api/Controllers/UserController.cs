@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -28,6 +29,7 @@ namespace Oxagile.Internal.Api.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<GetUserDto>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Get()
         {
             var users = await userRepository.Get();
@@ -35,11 +37,19 @@ namespace Oxagile.Internal.Api.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [ProducesResponseType(typeof(GetUserDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Get(int id)
         {
             if (ModelState.IsValid)
             {
                 var user = await userRepository.Get(id);
+                if (user == null)
+                {
+                    return NotFound(new { respose = "error", message = $"user id = {id} does not exist"});
+                }
+
                 return Ok(mapper.Map<GetUserDto>(user));
             }
 
@@ -47,6 +57,9 @@ namespace Oxagile.Internal.Api.Controllers
         }
 
         [HttpPut("{id:int}")]
+        [ProducesResponseType(typeof(GetUserDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Edit(int id, [FromBody]EditUserDto user)
         {
             if (ModelState.IsValid)
@@ -54,7 +67,7 @@ namespace Oxagile.Internal.Api.Controllers
                 var existing = await userRepository.Get(id);
                 if (existing == null)
                 {
-                    return NotFound();
+                    return NotFound(new { respose = "error", message = $"user id = {id} does not exist"});
                 }
 
                 existing.Name = user.Name;
@@ -71,16 +84,13 @@ namespace Oxagile.Internal.Api.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(GetUserDto), (int)HttpStatusCode.Created)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Create([FromBody]CreateUserDto user)
         {
             if (ModelState.IsValid)
             {
                 var company = await companyRepository.Get(user.CompanyId);
-                if (company == null)
-                {
-                    return BadRequest(ModelState);
-                }
-
                 var userToCreate = mapper.Map<User>(user);
                 var @new = await userRepository.Create(userToCreate);
                 @new.Company = company;
@@ -91,21 +101,18 @@ namespace Oxagile.Internal.Api.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> Delete(int id)
         {
-            if (ModelState.IsValid)
+            var existing = await userRepository.Get(id);
+            if (existing == null)
             {
-                var existing = await userRepository.Get(id);
-                if (existing == null)
-                {
-                    return NotFound();
-                }
-
-                var result = await userRepository.Delete(id);
-                return Ok();
+                return NotFound(new { respose = "error", message = $"user id = {id} does not exist"});
             }
 
-            return BadRequest(ModelState);
+            var result = await userRepository.Delete(id);
+            return Ok();
         }
     }
 }

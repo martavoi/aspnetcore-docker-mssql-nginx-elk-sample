@@ -1,6 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Oxagile.Internal.Api.ActionResults;
 
 namespace Oxagile.Internal.Api.Filters.Exception
 {
@@ -10,14 +11,11 @@ namespace Oxagile.Internal.Api.Filters.Exception
         {
             if (context.Exception is System.Exception)
             {
-                context.Result = new ObjectResult(new
+                context.Result = new InternalServerErrorObjectResult(new
                     {
                         Result = "error",
                         Message = "internal server error"
-                    })
-                    {
-                        StatusCode = 500
-                    };
+                    });
             }
         }
     }

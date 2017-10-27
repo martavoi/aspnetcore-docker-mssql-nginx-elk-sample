@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -23,30 +24,37 @@ namespace Oxagile.Internal.Api.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(GetCompanyDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> Get(int id)
         {
-            if (ModelState.IsValid)
+            var company = await companyRepository.Get(id);
+            if (company == null)
             {
-                var company = await companyRepository.Get(id);
-                return Ok(mapper.Map<GetCompanyDto>(company));    
+                return NotFound(new { respose = "error", message = $"company id = {id} does not exist"});
             }
 
-            return BadRequest(ModelState);
+            return Ok(mapper.Map<GetCompanyDto>(company));
         }
 
         [HttpGet("users")]
+        [ProducesResponseType(typeof(IEnumerable<GetCompanyUserDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetUsers(int id)
         {
-            if (ModelState.IsValid)
+            var company = await companyRepository.Get(id);
+            if (company == null)
             {
-                var company = await companyRepository.Get(id);
-                return Ok(mapper.Map<IEnumerable<GetCompanyUserDto>>(company.Users));    
+                return NotFound(new { respose = "error", message = $"company id = {id} does not exist"});
             }
 
-            return BadRequest(ModelState);
+            return Ok(mapper.Map<IEnumerable<GetCompanyUserDto>>(company.Users));
         }
 
         [HttpPut]
+        [ProducesResponseType(typeof(GetCompanyDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Edit(int id, [FromBody]EditCompanyDto company)
         {
             if (ModelState.IsValid)
@@ -54,7 +62,7 @@ namespace Oxagile.Internal.Api.Controllers
                 var existing = await companyRepository.Get(id);
                 if (existing == null)
                 {
-                    return NotFound();
+                    return NotFound(new { respose = "error", message = $"company id = {id} does not exist"});
                 }
 
                 existing.Name = company.Name;
@@ -67,21 +75,18 @@ namespace Oxagile.Internal.Api.Controllers
         }
 
         [HttpDelete]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> Delete(int id)
         {
-            if (ModelState.IsValid)
+            var existing = await companyRepository.Get(id);
+            if (existing == null)
             {
-                var existing = await companyRepository.Get(id);
-                if (existing == null)
-                {
-                    return NotFound();
-                }
-
-                var result = await companyRepository.Delete(id);
-                return Ok();
+                return NotFound(new { respose = "error", message = $"company id = {id} does not exist"});
             }
 
-            return BadRequest(ModelState);
+            var result = await companyRepository.Delete(id);
+            return Ok();
         }
     }
 }

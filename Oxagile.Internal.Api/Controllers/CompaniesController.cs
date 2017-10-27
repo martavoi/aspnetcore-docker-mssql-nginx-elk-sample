@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +26,7 @@ namespace Oxagile.Internal.Api.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<GetCompanyDto>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Get()
         {
             var companies = await companyRepository.Get();
@@ -32,6 +34,8 @@ namespace Oxagile.Internal.Api.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(GetCompanyDto), (int)HttpStatusCode.Created)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Create([FromBody]CreateCompanyDto company)
         {
             if (ModelState.IsValid)
