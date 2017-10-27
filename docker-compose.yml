@@ -1,0 +1,28 @@
+version: '3'
+services:
+  oxagile.api:
+    build: ./Oxagile.Internal.Api
+    depends_on:
+     - oxagile.mssql
+    ports:
+     - 5000:80
+    networks:
+      - api
+  oxagile.mssql:
+    image: microsoft/mssql-server-linux:2017-latest
+    volumes:
+     - oxagile.mssql.data:/var/opt/mssql
+    ports:
+     - 1433:1433
+    networks:
+      - api
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=0PFsE1XMl2e9qzoM5qTj
+
+networks:
+  api:
+    driver: bridge
+
+volumes:
+  oxagile.mssql.data:
