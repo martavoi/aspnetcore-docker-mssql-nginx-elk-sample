@@ -1,19 +1,34 @@
 version: '3'
 services:
-  oxagile.api:
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - oxagile.api.1
+      - oxagile.api.2
+    networks:
+      - api
+  oxagile.api.1:
     build: ./Oxagile.Internal.Api
     depends_on:
      - oxagile.mssql
-    ports:
-     - 5000:80
+    networks:
+      - api
+  oxagile.api.2:
+    build: ./Oxagile.Internal.Api
+    depends_on:
+     - oxagile.mssql
     networks:
       - api
   oxagile.mssql:
     image: microsoft/mssql-server-linux:2017-latest
     volumes:
      - oxagile.mssql.data:/var/opt/mssql
-    ports:
-     - 1433:1433
+    # due to EF Core Migrations we have to manage DB schema somehow (directly?)
+    # $ dotnet ef database update
+    # ports:
+    #  - 1433:1433
     networks:
       - api
     environment:
