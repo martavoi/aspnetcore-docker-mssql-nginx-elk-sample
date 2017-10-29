@@ -1,11 +1,24 @@
 version: '3'
 services:
-  oxagile.api:
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - oxagile.api.1
+      - oxagile.api.2
+    networks:
+      - api
+  oxagile.api.1:
     build: ./Oxagile.Internal.Api
     depends_on:
      - oxagile.mssql
-    ports:
-     - 80:80
+    networks:
+      - api
+  oxagile.api.2:
+    build: ./Oxagile.Internal.Api
+    depends_on:
+     - oxagile.mssql
     networks:
       - api
   oxagile.mssql:
