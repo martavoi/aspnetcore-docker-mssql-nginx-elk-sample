@@ -14,6 +14,8 @@ using Oxagile.Internal.Api.Filters.Exception;
 using Oxagile.Internal.Api.Formatters;
 using StructureMap;
 using Swashbuckle.AspNetCore.Swagger;
+using WebApiContrib.Core.Formatter.Yaml;
+using WebApiContrib.Core.Formatter.Csv;
 
 namespace Oxagile.Internal.Api
 {
@@ -37,13 +39,11 @@ namespace Oxagile.Internal.Api
                 .AddMvcCore(_ => 
                 {
                     _.Filters.Add(typeof(ExceptionFilter));
-
-                    _.OutputFormatters.RemoveType<TextOutputFormatter>();
-                    _.OutputFormatters.RemoveType<HttpNoContentOutputFormatter>();
                 })
                 .AddFluentValidation()
                 .AddJsonFormatters(_ => _.NullValueHandling = NullValueHandling.Ignore)
                 .AddXmlSerializerFormatters()
+                .AddYamlFormatters()
                 .AddCsvSerializerFormatters()
                 .AddApiExplorer();
 
