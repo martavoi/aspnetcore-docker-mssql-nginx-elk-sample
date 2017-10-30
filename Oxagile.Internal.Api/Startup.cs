@@ -55,7 +55,9 @@ namespace Oxagile.Internal.Api
 
             services.AddSwaggerGen(_ =>
             {
-                _.SwaggerDoc("v1", new Info { Title = "Oxagile.Internal.Api", Version = "v1" });
+                _.DescribeAllEnumsAsStrings();
+                _.OperationFilter<FileOperationFilter>();
+                _.SwaggerDoc("v1", new Info { Title = "Oxagile.Api", Version = "v1" });
             });
 
             var container = new Container();
@@ -78,11 +80,12 @@ namespace Oxagile.Internal.Api
             {
                 ForwardedHeaders = ForwardedHeaders.All,    
             });
+            app.UseResponseBuffering();
 
             app.UseSwagger();
             app.UseSwaggerUI(_ =>
             {
-                _.SwaggerEndpoint("/swagger/v1/swagger.json", "Oxagile.Internal.Api v1");
+                _.SwaggerEndpoint("/swagger/v1/swagger.json", "Oxagile.Api v1");
             });
             
             app.UseMvc();

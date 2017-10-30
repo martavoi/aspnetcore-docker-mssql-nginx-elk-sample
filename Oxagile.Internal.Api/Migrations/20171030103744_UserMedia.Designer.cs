@@ -11,9 +11,10 @@ using System;
 namespace Oxagile.Internal.Api.Migrations
 {
     [DbContext(typeof(UserCompanyContext))]
-    partial class UserCompanyContextModelSnapshot : ModelSnapshot
+    [Migration("20171030103744_UserMedia")]
+    partial class UserMedia
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

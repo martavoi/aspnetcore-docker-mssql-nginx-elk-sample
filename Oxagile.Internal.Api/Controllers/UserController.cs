@@ -1,13 +1,20 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Oxagile.Internal.Api.Dtos;
 using Oxagile.Internal.Api.Dtos.Validation;
 using Oxagile.Internal.Api.Entities;
+using Oxagile.Internal.Api.Extensions;
 using Oxagile.Internal.Api.Repositories;
+using Oxagile.Internal.Api.Services;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Oxagile.Internal.Api.Controllers
 {
@@ -16,16 +23,28 @@ namespace Oxagile.Internal.Api.Controllers
     {
         private readonly ICompanyRepository companyRepository;
         private readonly IUserRepository userRepository;
+        private readonly IUserMediaRepository userMediaRepository;
+        private readonly IImageProcessor imageProcessor;
+        private readonly IBlobStorage blobStorage;
         private readonly IMapper mapper;
+        private readonly Settings settings;
 
         public UserController(
             ICompanyRepository companyRepository,
             IUserRepository userRepository,
+            IUserMediaRepository userMediaRepository,
+            IImageProcessor imageProcessor,
+            IBlobStorage blobStorage,
+            IOptions<Settings> options,
             IMapper mapper)
         {
             this.companyRepository = companyRepository;
             this.userRepository = userRepository;
+            this.userMediaRepository = userMediaRepository;
+            this.imageProcessor = imageProcessor;
+            this.blobStorage = blobStorage;
             this.mapper = mapper;
+            this.settings = options.Value;
         }
 
         [HttpGet]
@@ -50,7 +69,11 @@ namespace Oxagile.Internal.Api.Controllers
                     return NotFound(new { respose = "error", message = $"user id = {id} does not exist"});
                 }
 
-                return Ok(mapper.Map<GetUserDto>(user));
+                var userPic = await userMediaRepository.GetUserPic(id);
+                var userDto = mapper.Map<GetUserDto>(user);
+                userDto.PicUrl = userPic == null ? null : Url.ActionUserPic(userPic.BlobPath);
+
+                return Ok(userDto);
             }
 
             return BadRequest(ModelState);
@@ -77,7 +100,12 @@ namespace Oxagile.Internal.Api.Controllers
                 existing.Email = user.Email;
 
                 var updated = await userRepository.Update(existing);
-                return Ok(mapper.Map<GetUserDto>(updated));
+                
+                var userPic = await userMediaRepository.GetUserPic(id);
+                var userDto = mapper.Map<GetUserDto>(updated);
+                userDto.PicUrl = userPic == null ? null : Url.ActionUserPic(userPic.BlobPath);
+
+                return Ok(userDto);
             }
             
             return BadRequest(ModelState);
@@ -105,14 +133,52 @@ namespace Oxagile.Internal.Api.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> Delete(int id)
         {
-            var existing = await userRepository.Get(id);
-            if (existing == null)
+            var user = await userRepository.Get(id);
+            if (user == null)
             {
                 return NotFound(new { respose = "error", message = $"user id = {id} does not exist"});
             }
 
             var result = await userRepository.Delete(id);
             return Ok();
+        }
+
+        [HttpPost("{id:int}/pic")]
+        [SwaggerOperation(operationId: "postuserpic")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public async Task<IActionResult> Pic(int id, IFormFile file)
+        {
+            var user = await userRepository.Get(id);
+            if (user == null)
+            {
+                return NotFound(new { respose = "error", message = $"user id = {id} does not exist"});
+            }
+
+            using (var memStream = new MemoryStream())
+            {
+                await file.CopyToAsync(memStream);
+                var image = memStream.ToArray();
+
+                var mimeType = imageProcessor.GetImageMimeType(image);
+                if (!imageProcessor.SupportedMimeTypes.Contains(mimeType))
+                {
+                    return BadRequest(new { Result = "error", Message = "unsupported format. the only supported format is JPEG" });
+                }
+
+                var blobName = await blobStorage.SaveAsync(image);
+                
+                var media = await userMediaRepository.Add(new UserMedia 
+                {
+                    BlobPath = blobName,
+                    Extension = imageProcessor.GetImageExtension(image),
+                    Uploaded = DateTime.UtcNow,
+                    Rel = MediaRelationType.UserPic,
+                    UserId = id
+                });
+
+                return Ok(new { PicUrl = Url.ActionUserPic(blobName)});
+            }
         }
     }
 }

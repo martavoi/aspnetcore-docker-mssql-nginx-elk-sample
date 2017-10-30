@@ -14,10 +14,10 @@ FROM microsoft/aspnetcore:2.0
 WORKDIR /app
 COPY --from=build-env /app/build .
 
-RUN groupadd -r oxagile.api \
-    && useradd --no-log-init -r -g oxagile.api oxagile.api \
-    && chown -R oxagile.api:oxagile.api /app
-USER oxagile.api
+# RUN groupadd -r oxagile.api \
+#     && useradd --no-log-init -r -g oxagile.api oxagile.api \
+#     && chown -R oxagile.api:oxagile.api /app
+# USER oxagile.api
 
 EXPOSE 80
 
