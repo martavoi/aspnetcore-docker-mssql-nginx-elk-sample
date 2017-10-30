@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json;
 using Oxagile.Internal.Api.Entities;
 using Oxagile.Internal.Api.Filters.Exception;
 using Oxagile.Internal.Api.Formatters;
