@@ -41,7 +41,7 @@ namespace Oxagile.Internal.Api
                     _.OutputFormatters.RemoveType<HttpNoContentOutputFormatter>();
                 })
                 .AddFluentValidation()
-                .AddJsonFormatters()
+                .AddJsonFormatters(_ => _.NullValueHandling = NullValueHandling.Ignore)
                 .AddXmlSerializerFormatters()
                 .AddCsvSerializerFormatters()
                 .AddApiExplorer();
