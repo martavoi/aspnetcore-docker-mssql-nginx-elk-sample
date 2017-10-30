@@ -15,12 +15,14 @@ services:
      - oxagile.mssql
     networks:
       - api
+      - elk
   oxagile.api.2:
     build: ./Oxagile.Internal.Api
     depends_on:
      - oxagile.mssql
     networks:
       - api
+      - elk
   oxagile.mssql:
     image: microsoft/mssql-server-linux:2017-latest
     volumes:
@@ -34,10 +36,34 @@ services:
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=0PFsE1XMl2e9qzoM5qTj
+  oxagile.elasticsearch:
+    build: ./elasticsearch
+    volumes:
+      - oxagile.elasticsearch.data:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    networks:
+      - elk
+  oxagile.kibana:
+    build: ./kibana
+    depends_on:
+     - oxagile.elasticsearch
+    ports:
+      - 5601:5601
+    networks:
+      - elk
 
 networks:
   api:
     driver: bridge
+  elk:
+    driver: bridge
 
 volumes:
   oxagile.mssql.data:
+  oxagile.elasticsearch.data:

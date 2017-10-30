@@ -12,6 +12,7 @@ using Serilog.Events;
 using Serilog.Exceptions;
 using Serilog.Formatting.Compact;
 using Serilog.Formatting.Json;
+using Serilog.Sinks.Elasticsearch;
 using Serilog.Sinks.SystemConsole.Themes;
 
 namespace Oxagile.Internal.Api
@@ -21,12 +22,20 @@ namespace Oxagile.Internal.Api
         public static int Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Information()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Verbose)
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .Enrich.WithThreadId()
                 .Enrich.WithExceptionDetails()
                 .WriteTo.Console(new CompactJsonFormatter(), LogEventLevel.Information)
+                .WriteTo.Elasticsearch(
+                    new ElasticsearchSinkOptions(
+                        new Uri("http://oxagile.elasticsearch:9200"))
+                        {
+                            AutoRegisterTemplate = true,
+                            IndexFormat = "oxagile-api-logs-{0:yyyy.MM.dd}",
+                            CustomFormatter = new ExceptionAsObjectJsonFormatter(renderMessage:true)
+                        })
                 .CreateLogger();
 
             try
