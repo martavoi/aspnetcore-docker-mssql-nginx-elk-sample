@@ -64,10 +64,6 @@ namespace Oxagile.Internal.Api
             var container = new Container();
             container.Configure(config =>
             {
-                config.Scan(_ => 
-                {
-                    _.WithDefaultConventions();
-                });
                 config.AddRegistry<Registry>();
                 config.Populate(services);
             });
