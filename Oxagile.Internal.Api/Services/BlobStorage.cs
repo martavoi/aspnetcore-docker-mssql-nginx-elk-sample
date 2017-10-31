@@ -1,5 +1,6 @@
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace Oxagile.Internal.Api.Services
@@ -7,15 +8,17 @@ namespace Oxagile.Internal.Api.Services
     public class BlobStorage : IBlobStorage
     {
         private readonly Settings settings;
+        private readonly IHostingEnvironment env;
 
-        public BlobStorage(IOptions<Settings> options)
+        public BlobStorage(IHostingEnvironment environment, IOptions<Settings> options)
         {
             this.settings = options.Value;
+            this.env = environment;
         }
 
         public async Task<string> SaveAsync(byte[] stream)
         {
-            var fileStoragePath = Path.Combine(Directory.GetCurrentDirectory(), settings.FileStoragePath);
+            var fileStoragePath = Path.Combine(env.ContentRootPath, settings.FileStoragePath);
             EnsureDirExists(fileStoragePath);
 
             var fileName = Path.GetRandomFileName();
@@ -42,7 +45,7 @@ namespace Oxagile.Internal.Api.Services
 
         private string ExpandBlobPath(string blobPath)
         {
-            return Path.Combine(Directory.GetCurrentDirectory(), settings.FileStoragePath, blobPath);
+            return Path.Combine(env.ContentRootPath, settings.FileStoragePath, blobPath);
         }
 
         private void EnsureDirExists(string fileStoragePath)

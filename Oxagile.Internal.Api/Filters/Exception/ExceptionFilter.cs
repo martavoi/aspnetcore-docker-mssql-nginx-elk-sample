@@ -2,6 +2,7 @@ using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Oxagile.Internal.Api.ActionResults;
+using Serilog;
 
 namespace Oxagile.Internal.Api.Filters.Exception
 {
@@ -11,6 +12,7 @@ namespace Oxagile.Internal.Api.Filters.Exception
         {
             if (context.Exception is System.Exception)
             {
+                Log.Error(context.Exception, "Exception");
                 context.Result = new InternalServerErrorObjectResult(new
                     {
                         Result = "error",

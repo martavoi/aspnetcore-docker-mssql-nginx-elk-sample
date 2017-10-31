@@ -32,6 +32,7 @@ namespace Oxagile.Internal.Api
                     new ElasticsearchSinkOptions(
                         new Uri("http://oxagile.elasticsearch:9200"))
                         {
+                            InlineFields = true,
                             AutoRegisterTemplate = true,
                             IndexFormat = "oxagile-api-logs-{0:yyyy.MM.dd}",
                             CustomFormatter = new ExceptionAsObjectJsonFormatter(renderMessage:true)

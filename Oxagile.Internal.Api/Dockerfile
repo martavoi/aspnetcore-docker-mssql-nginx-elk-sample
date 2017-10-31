@@ -12,6 +12,7 @@ FROM microsoft/aspnetcore:2.0
 #     procps
 
 WORKDIR /app
+RUN mkdir media
 COPY --from=build-env /app/build .
 
 # RUN groupadd -r oxagile.api \

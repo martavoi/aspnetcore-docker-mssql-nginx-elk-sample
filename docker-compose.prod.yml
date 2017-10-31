@@ -13,6 +13,8 @@ services:
     build: ./Oxagile.Internal.Api
     depends_on:
      - oxagile.mssql
+    volumes:
+      - oxagile.api.media:/app/media
     networks:
       - api
       - elk
@@ -20,6 +22,8 @@ services:
     build: ./Oxagile.Internal.Api
     depends_on:
      - oxagile.mssql
+    volumes:
+      - oxagile.api.media:/app/media
     networks:
       - api
       - elk
@@ -67,3 +71,4 @@ networks:
 volumes:
   oxagile.mssql.data:
   oxagile.elasticsearch.data:
+  oxagile.api.media:
