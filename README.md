@@ -16,7 +16,7 @@ Navigate to [http://localhost](http://localhost) for API Documentation.
 
 ### Prerequisites
 
-You have to install [Docker](https://docs.docker.com/engine/installation/) first to get things done. For development all that you need is [ASP.NET Core SKD](https://www.microsoft.com/net/download/core).
+You have to install [Docker](https://docs.docker.com/engine/installation/) first to get things done. For development all that you need is [ASP.NET Core SDK](https://www.microsoft.com/net/download/core).
 
 ### Installing
 
@@ -25,8 +25,9 @@ There are two docker-compose configurations: minimal and production. Also, you c
 Since web api rely on EF Core Code-First Migrations, you need to update DB shcema once.
 
 ```{r, engine='bash', count_lines}
+cd ./Oxagile.Demos.Data
 dotnet restore
-dotnet ef database update
+dotnet ef database update -s ../Oxagile.Demos.Api/Oxagile.Demos.Api.csproj
 ```
 
 ### Contributing
