@@ -1,6 +1,6 @@
 Dockerized ASP.NET Core WebAPI app
 
-All-in Web API sample to get started with ASP.NET Core on Docker. Incorporates nginx reverse proxy with load balancer configuration along with advanced logging approach (serilog + elasticsearch + kibana).
+All-in-one Web API sample to get started with ASP.NET Core on Docker. Incorporates nginx reverse proxy with load balancer configuration along with advanced logging approach (serilog + elasticsearch + kibana).
 
 ## Getting Started
 
@@ -16,7 +16,7 @@ Navigate to [http://localhost](http://localhost) for API Documentation.
 
 ### Prerequisites
 
-You have to install [Docker](https://docs.docker.com/engine/installation/) first to get things done. For development all that you need are [ASP.NET Core SKD](https://www.microsoft.com/net/download/core).
+You have to install [Docker](https://docs.docker.com/engine/installation/) first to get things done. For development all that you need is [ASP.NET Core SKD](https://www.microsoft.com/net/download/core).
 
 ### Installing
 
@@ -27,6 +27,15 @@ Since web api rely on EF Core Code-First Migrations, you need to update DB shcem
 ```{r, engine='bash', count_lines}
 dotnet restore
 dotnet ef database update
+```
+
+### Contributing
+
+Any improvements are appreciated. Post a PR and feel free to discuss anything must be added/changed.
+
+To update db schema using EF Core Migrations Tools, from within .\Oxagile.Demos.Data directory run:
+```{r, engine='bash', count_lines}
+dotnet ef migrations add <migration_name> -s ../Oxagile.Demos.Api/Oxagile.Demos.Api.csproj
 ```
 
 ## License
