@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceRoot}/Oxagile.Internal.Api/bin/Debug/netcoreapp2.0/Oxagile.Internal.Api.dll",
+            "program": "${workspaceRoot}/Oxagile.Demos.Api/bin/Debug/netcoreapp2.0/Oxagile.Demos.Api.dll",
             "args": [],
-            "cwd": "${workspaceRoot}/Oxagile.Internal.Api",
+            "cwd": "${workspaceRoot}/Oxagile.Demos.Api",
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart",
             "launchBrowser": {
@@ -33,7 +33,7 @@
                 "ASPNETCORE_ENVIRONMENT": "Development"
             },
             "sourceFileMap": {
-                "/Views": "${workspaceRoot}/Oxagile.Internal.Api/Views"
+                "/Views": "${workspaceRoot}/Oxagile.Demos.Api/Views"
             }
         },
         {

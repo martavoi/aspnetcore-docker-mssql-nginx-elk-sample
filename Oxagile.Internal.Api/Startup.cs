@@ -9,15 +9,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
-using Oxagile.Internal.Api.Entities;
-using Oxagile.Internal.Api.Filters.Exception;
-using Oxagile.Internal.Api.Formatters;
+using Oxagile.Demos.Data.Entities;
+using Oxagile.Demos.Api.Filters.Exception;
+using Oxagile.Demos.Api.Formatters;
 using StructureMap;
 using Swashbuckle.AspNetCore.Swagger;
 using WebApiContrib.Core.Formatter.Yaml;
 using WebApiContrib.Core.Formatter.Csv;
 
-namespace Oxagile.Internal.Api
+namespace Oxagile.Demos.Api
 {
     public class Startup
     {

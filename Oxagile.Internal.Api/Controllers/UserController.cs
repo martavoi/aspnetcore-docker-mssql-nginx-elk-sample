@@ -8,15 +8,15 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Oxagile.Internal.Api.Dtos;
-using Oxagile.Internal.Api.Dtos.Validation;
-using Oxagile.Internal.Api.Entities;
-using Oxagile.Internal.Api.Extensions;
-using Oxagile.Internal.Api.Repositories;
-using Oxagile.Internal.Api.Services;
+using Oxagile.Demos.Api.Dtos;
+using Oxagile.Demos.Api.Dtos.Validation;
+using Oxagile.Demos.Data.Entities;
+using Oxagile.Demos.Api.Extensions;
+using Oxagile.Demos.Data.Repositories;
+using Oxagile.Demos.Api.Services;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Oxagile.Internal.Api.Controllers
+namespace Oxagile.Demos.Api.Controllers
 {
     [Route("api/users")]
     public class UserController : ControllerBase

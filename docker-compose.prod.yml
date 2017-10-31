@@ -10,7 +10,7 @@ services:
     networks:
       - api
   oxagile.api.1:
-    build: ./Oxagile.Internal.Api
+    build: ./Oxagile.Demos.Api
     depends_on:
      - oxagile.mssql
     volumes:
@@ -19,7 +19,7 @@ services:
       - api
       - elk
   oxagile.api.2:
-    build: ./Oxagile.Internal.Api
+    build: ./Oxagile.Demos.Api
     depends_on:
      - oxagile.mssql
     volumes:

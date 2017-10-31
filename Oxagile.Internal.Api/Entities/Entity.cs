@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Oxagile.Internal.Api.Entities
+namespace Oxagile.Demos.Data.Entities
 {
     public class Entity
     {

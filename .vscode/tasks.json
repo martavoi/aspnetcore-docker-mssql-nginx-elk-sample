@@ -7,7 +7,7 @@
         {
             "taskName": "build",
             "args": [
-                "${workspaceRoot}/Oxagile.Internal.Api/Oxagile.Internal.Api.csproj"
+                "${workspaceRoot}/Oxagile.Demos.Api/Oxagile.Demos.Api.csproj"
             ],
             "isBuildCommand": true,
             "problemMatcher": "$msCompile"
@@ -16,7 +16,7 @@
           "taskName": "test",
           "command": "dotnet",
           "options": {
-              "cwd": "${workspaceRoot}/Oxagile.Internal.Api.Test"
+              "cwd": "${workspaceRoot}/Oxagile.Demos.Api.Test"
           },
           "args": [
             "test"
