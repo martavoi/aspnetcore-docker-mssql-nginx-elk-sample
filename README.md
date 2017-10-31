@@ -19,6 +19,11 @@ dotnet ef database update -s ../Oxagile.Demos.Api/Oxagile.Demos.Api.csproj
 
 Navigate to [http://localhost](http://localhost) for API Documentation.
 
+To shutdown cluster run:
+```{r, engine='bash', count_lines}
+docker-compose -f docker-compose.prod.yml down
+```
+
 ### Prerequisites
 
 You have to install [Docker](https://docs.docker.com/engine/installation/) first to get things done. For development all that you need is [ASP.NET Core SDK](https://www.microsoft.com/net/download/core).
