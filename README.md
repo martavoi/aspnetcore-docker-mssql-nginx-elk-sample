@@ -8,8 +8,13 @@ All-in-one Web API sample to get started with ASP.NET Core on Docker. Incorporat
 git clone git@github.com:martavoi/aspnetcore-docker-mssql-nginx-elk-sample.git
 cd aspnetcore-docker-mssql-nginx-elk-sample
 docker-compose -f docker-compose.prod.yml up --build
+```
+To initialize database run:
+
+```{r, engine='bash', count_lines}
+cd ./Oxagile.Demos.Data
 dotnet restore
-dotnet ef database update
+dotnet ef database update -s ../Oxagile.Demos.Api/Oxagile.Demos.Api.csproj
 ```
 
 Navigate to [http://localhost](http://localhost) for API Documentation.
