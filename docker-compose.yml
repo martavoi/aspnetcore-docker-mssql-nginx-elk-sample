@@ -1,7 +1,7 @@
 version: '3'
 services:
   oxagile.api:
-    build: ./Oxagile.Demos.Api
+    build: ./api
     depends_on:
      - oxagile.mssql
     ports:

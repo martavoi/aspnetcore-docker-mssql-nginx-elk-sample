@@ -6,7 +6,7 @@
 */!.vscode/launch.json
 */!.vscode/extensions.json
 
-*/obj/
-*/bin/
+**/obj/
+**/bin/
 
 media/

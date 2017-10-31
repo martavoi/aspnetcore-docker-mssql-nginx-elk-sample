@@ -1,0 +1,5 @@
+*/bin/
+*/obj/
+
+./Oxagile.Demos.Api/media/
+./Oxagile.Demos.Api/appsettings.Development.json

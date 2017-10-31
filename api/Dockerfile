@@ -2,7 +2,7 @@ FROM microsoft/aspnetcore-build:2.0 AS build-env
 WORKDIR /app
 
 COPY . ./
-WORKDIR /app
+WORKDIR /app/Oxagile.Demos.Api
 RUN dotnet publish -c Release -o build
 
 FROM microsoft/aspnetcore:2.0
@@ -13,7 +13,7 @@ FROM microsoft/aspnetcore:2.0
 
 WORKDIR /app
 RUN mkdir media
-COPY --from=build-env /app/build .
+COPY --from=build-env /app/Oxagile.Demos.Api/build .
 
 # RUN groupadd -r oxagile.api \
 #     && useradd --no-log-init -r -g oxagile.api oxagile.api \
