@@ -11,6 +11,12 @@ services:
       - api
   oxagile.api.1:
     build: ./api
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
     depends_on:
      - oxagile.mssql
     volumes:
@@ -20,6 +26,12 @@ services:
       - elk
   oxagile.api.2:
     build: ./api
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
     depends_on:
      - oxagile.mssql
     volumes:
