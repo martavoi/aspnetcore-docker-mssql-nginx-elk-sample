@@ -57,6 +57,12 @@ namespace Oxagile.Demos.Api
                 _.SwaggerDoc("v1", new Info { Title = "Oxagile.Demos.Api", Version = "v1" });
             });
 
+            services
+                .AddMetrics(Configuration.GetSection("AppMetrics"))
+                .AddHealthChecks()
+                .AddMetricsMiddleware(Configuration.GetSection("AspNetMetrics"))
+                .AddJsonSerialization();
+
             var container = new Container();
             container.Configure(config =>
             {
@@ -73,7 +79,10 @@ namespace Oxagile.Demos.Api
             {
                 ForwardedHeaders = ForwardedHeaders.All,    
             });
+            
             app.UseResponseBuffering();
+
+            app.UseMetrics();
 
             app.UseSwagger();
             app.UseSwaggerUI(_ =>
