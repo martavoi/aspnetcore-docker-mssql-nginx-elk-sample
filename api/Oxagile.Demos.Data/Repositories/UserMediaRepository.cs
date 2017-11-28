@@ -19,7 +19,6 @@ namespace Oxagile.Demos.Data.Repositories
         public async Task<UserMedia> Add(UserMedia m)
         {
             await context.UserMedia.AddAsync(m);
-            await context.SaveChangesAsync();
             return m;
         }
 

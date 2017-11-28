@@ -17,9 +17,7 @@ namespace Oxagile.Demos.Api
             }).CreateMapper();
             For<IMapper>().Use(mapper);
 
-            For<ICompanyRepository>().Use<CompanyRepository>();
-            For<IUserRepository>().Use<UserRepository>();
-            For<IUserMediaRepository>().Use<UserMediaRepository>();
+            IncludeRegistry<Data.Registry>();
 
             For<IBlobStorage>().Use<BlobStorage>();
             For<IImageProcessor>().Use<ImageProcessor>();

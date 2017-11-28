@@ -9,7 +9,7 @@ namespace Oxagile.Demos.Data.Repositories
         Task<User> Create(User c);
         Task<IEnumerable<User>> Get();
         Task<User> Get(int id);
-        Task<User> Update(User c);
-        Task<bool> Delete(int id);
+        User Update(User c);
+        void Delete(User id);
     }
 }
