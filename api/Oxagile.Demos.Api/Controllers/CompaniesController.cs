@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Oxagile.Demos.Api.Dtos;
+using Oxagile.Demos.Data;
 using Oxagile.Demos.Data.Entities;
 using Oxagile.Demos.Data.Repositories;
 using Serilog.Context;
@@ -14,14 +15,14 @@ namespace Oxagile.Demos.Api.Controllers
     [Route("api/companies")]
     public class CompaniesController : ControllerBase
     {
-        private readonly ICompanyRepository companyRepository;
+        private readonly IUnitOfWork uow;
         private readonly IMapper mapper;
 
         public CompaniesController(
-            ICompanyRepository companyRepository,
+            IUnitOfWork uow,
             IMapper mapper)
         {
-            this.companyRepository = companyRepository;
+            this.uow = uow;
             this.mapper = mapper;
         }
 
@@ -29,7 +30,7 @@ namespace Oxagile.Demos.Api.Controllers
         [ProducesResponseType(typeof(IEnumerable<GetCompanyDto>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Get()
         {
-            var companies = await companyRepository.Get();
+            var companies = await uow.Company.Get();
             return Ok(mapper.Map<IEnumerable<GetCompanyDto>>(companies));
         }
 
@@ -40,7 +41,8 @@ namespace Oxagile.Demos.Api.Controllers
         {
             if (ModelState.IsValid)
             {
-                var @new = await companyRepository.Create(mapper.Map<Company>(company));
+                var @new = await uow.Company.Create(mapper.Map<Company>(company));
+                await uow.CommitAsync();
                 return CreatedAtAction("Get", "Company", new { id = @new.Id }, mapper.Map<GetCompanyDto>(@new));
             }
 

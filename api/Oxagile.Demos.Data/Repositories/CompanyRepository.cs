@@ -18,7 +18,6 @@ namespace Oxagile.Demos.Data.Repositories
         public async Task<Company> Create(Company c)
         {
             await context.Companies.AddAsync(c);
-            await context.SaveChangesAsync();
             return c;
         }
 
@@ -40,26 +39,15 @@ namespace Oxagile.Demos.Data.Repositories
             return company;
         }
 
-        public async Task<Company> Update(Company c)
+        public Company Update(Company c)
         {
             context.Companies.Update(c);
-            await context.SaveChangesAsync();
             return c;
         }
 
-        public async Task<bool> Delete(int id)
+        public void Delete(Company company)
         {
-            var company = await context
-                .Companies
-                .SingleOrDefaultAsync(c => c.Id == id);
-            if (company == null)
-            {
-                throw new ArgumentException($"Company with id = {id} doesn't exist");
-            }
-
             context.Companies.Remove(company);
-            var result = await context.SaveChangesAsync();
-            return result == 0;
         }
     }   
 }

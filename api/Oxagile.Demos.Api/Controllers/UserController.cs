@@ -15,32 +15,27 @@ using Oxagile.Demos.Api.Infrastructure.Extensions;
 using Oxagile.Demos.Data.Repositories;
 using Oxagile.Demos.Api.Services;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Oxagile.Demos.Data;
 
 namespace Oxagile.Demos.Api.Controllers
 {
     [Route("api/users")]
     public class UserController : ControllerBase
     {
-        private readonly ICompanyRepository companyRepository;
-        private readonly IUserRepository userRepository;
-        private readonly IUserMediaRepository userMediaRepository;
+        private readonly IUnitOfWork uow;
         private readonly IImageProcessor imageProcessor;
         private readonly IBlobStorage blobStorage;
         private readonly IMapper mapper;
         private readonly Settings settings;
 
         public UserController(
-            ICompanyRepository companyRepository,
-            IUserRepository userRepository,
-            IUserMediaRepository userMediaRepository,
+            IUnitOfWork uow,
             IImageProcessor imageProcessor,
             IBlobStorage blobStorage,
             IOptions<Settings> options,
             IMapper mapper)
         {
-            this.companyRepository = companyRepository;
-            this.userRepository = userRepository;
-            this.userMediaRepository = userMediaRepository;
+            this.uow = uow;
             this.imageProcessor = imageProcessor;
             this.blobStorage = blobStorage;
             this.mapper = mapper;
@@ -51,7 +46,7 @@ namespace Oxagile.Demos.Api.Controllers
         [ProducesResponseType(typeof(IEnumerable<GetUserDto>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Get()
         {
-            var users = await userRepository.Get();
+            var users = await uow.User.Get();
             return Ok(mapper.Map<IEnumerable<GetUserDto>>(users));
         }
 
@@ -63,13 +58,13 @@ namespace Oxagile.Demos.Api.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await userRepository.Get(id);
+                var user = await uow.User.Get(id);
                 if (user == null)
                 {
                     return NotFound(new { respose = "error", message = $"user id = {id} does not exist"});
                 }
 
-                var userPic = await userMediaRepository.GetUserPic(id);
+                var userPic = await uow.Media.GetUserPic(id);
                 var userDto = mapper.Map<GetUserDto>(user);
                 userDto.PicUrl = userPic == null ? null : Url.ActionUserPic(userPic.BlobPath);
 
@@ -87,7 +82,7 @@ namespace Oxagile.Demos.Api.Controllers
         {
             if (ModelState.IsValid)
             {
-                var existing = await userRepository.Get(id);
+                var existing = await uow.User.Get(id);
                 if (existing == null)
                 {
                     return NotFound(new { respose = "error", message = $"user id = {id} does not exist"});
@@ -99,9 +94,10 @@ namespace Oxagile.Demos.Api.Controllers
                 existing.CompanyId = user.CompanyId;
                 existing.Email = user.Email;
 
-                var updated = await userRepository.Update(existing);
+                var updated = uow.User.Update(existing);
+                await uow.CommitAsync();
                 
-                var userPic = await userMediaRepository.GetUserPic(id);
+                var userPic = await uow.Media.GetUserPic(id);
                 var userDto = mapper.Map<GetUserDto>(updated);
                 userDto.PicUrl = userPic == null ? null : Url.ActionUserPic(userPic.BlobPath);
 
@@ -118,9 +114,10 @@ namespace Oxagile.Demos.Api.Controllers
         {
             if (ModelState.IsValid)
             {
-                var company = await companyRepository.Get(user.CompanyId);
+                var company = await uow.Company.Get(user.CompanyId);
                 var userToCreate = mapper.Map<User>(user);
-                var @new = await userRepository.Create(userToCreate);
+                var @new = await uow.User.Create(userToCreate);
+                await uow.CommitAsync();
                 @new.Company = company;
                 return CreatedAtAction("Get", new { id = @new.Id }, mapper.Map<GetUserDto>(@new));
             }
@@ -133,13 +130,14 @@ namespace Oxagile.Demos.Api.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> Delete(int id)
         {
-            var user = await userRepository.Get(id);
+            var user = await uow.User.Get(id);
             if (user == null)
             {
                 return NotFound(new { respose = "error", message = $"user id = {id} does not exist"});
             }
 
-            var result = await userRepository.Delete(id);
+            uow.User.Delete(user);
+            await uow.CommitAsync();
             return Ok();
         }
 
@@ -149,7 +147,7 @@ namespace Oxagile.Demos.Api.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> Pic(int id, IFormFile file)
         {
-            var user = await userRepository.Get(id);
+            var user = await uow.User.Get(id);
             if (user == null)
             {
                 return NotFound(new { respose = "error", message = $"user id = {id} does not exist"});
@@ -168,7 +166,7 @@ namespace Oxagile.Demos.Api.Controllers
 
                 var blobName = await blobStorage.SaveAsync(image);
                 
-                var media = await userMediaRepository.Add(new UserMedia 
+                var media = await uow.Media.Add(new UserMedia 
                 {
                     BlobPath = blobName,
                     Extension = imageProcessor.GetImageExtension(image),
@@ -176,6 +174,7 @@ namespace Oxagile.Demos.Api.Controllers
                     Rel = MediaRelationType.UserPic,
                     UserId = id
                 });
+                await uow.CommitAsync();
 
                 return Ok(new { PicUrl = Url.ActionUserPic(blobName)});
             }
